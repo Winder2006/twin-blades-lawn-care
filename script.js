@@ -1,5 +1,6 @@
-// Wait for the DOM to be fully loaded
-document.addEventListener('DOMContentLoaded', function() {
+// Wait for both DOM and EmailJS to be ready
+window.addEventListener('load', function() {
+    // Initialize calendar
     const calendarEl = document.getElementById('calendar');
     if (calendarEl) {
         const calendar = new FullCalendar.Calendar(calendarEl, {
@@ -25,10 +26,30 @@ document.addEventListener('DOMContentLoaded', function() {
         calendar.render();
     }
 
+    // Helper function to handle form submission
+    function handleFormSubmission(formData, serviceId, templateId, successMessage) {
+        return new Promise((resolve, reject) => {
+            if (typeof emailjs === 'undefined') {
+                reject(new Error('EmailJS is not loaded'));
+                return;
+            }
+
+            emailjs.send(serviceId, templateId, formData)
+                .then(function(response) {
+                    console.log('SUCCESS!', response.status, response.text);
+                    resolve(successMessage);
+                })
+                .catch(function(error) {
+                    console.error('FAILED...', error);
+                    reject(error);
+                });
+        });
+    }
+
     // Booking Form Submission
     const bookingForm = document.getElementById('bookingForm');
     if (bookingForm) {
-        bookingForm.addEventListener('submit', function(e) {
+        bookingForm.addEventListener('submit', async function(e) {
             e.preventDefault();
             
             if (!validateForm(bookingForm)) {
@@ -42,40 +63,43 @@ document.addEventListener('DOMContentLoaded', function() {
             submitBtn.disabled = true;
             submitBtn.textContent = 'Sending...';
 
-            // Get form data
-            const formData = {
-                from_name: document.getElementById('name').value,
-                from_email: document.getElementById('email').value,
-                phone: document.getElementById('phone').value,
-                address: document.getElementById('address').value,
-                yard_size: document.getElementById('yardSize').value,
-                service_date: document.getElementById('date').value,
-                service_time: document.getElementById('time').value,
-                notes: document.getElementById('notes').value,
-                price: document.getElementById('yardSize').options[document.getElementById('yardSize').selectedIndex].text
-            };
+            try {
+                // Get form data
+                const formData = {
+                    from_name: document.getElementById('name').value,
+                    from_email: document.getElementById('email').value,
+                    phone: document.getElementById('phone').value,
+                    address: document.getElementById('address').value,
+                    yard_size: document.getElementById('yardSize').value,
+                    service_date: document.getElementById('date').value,
+                    service_time: document.getElementById('time').value,
+                    notes: document.getElementById('notes').value,
+                    price: document.getElementById('yardSize').options[document.getElementById('yardSize').selectedIndex].text
+                };
 
-            // Send email using EmailJS
-            emailjs.send('service_obk7vl2', 'template_cownlse', formData)
-                .then(function() {
-                    alert('Booking request sent successfully! We will contact you shortly.');
-                    bookingForm.reset();
-                    submitBtn.disabled = false;
-                    submitBtn.textContent = originalText;
-                })
-                .catch(function(error) {
-                    alert('There was an error sending your booking request. Please try again later.');
-                    console.error('EmailJS Error:', error);
-                    submitBtn.disabled = false;
-                    submitBtn.textContent = originalText;
-                });
+                const message = await handleFormSubmission(
+                    formData,
+                    'service_obk7vl2',
+                    'template_cownlse',
+                    'Booking request sent successfully! We will contact you shortly.'
+                );
+
+                alert(message);
+                bookingForm.reset();
+            } catch (error) {
+                console.error('EmailJS Error:', error);
+                alert('There was an error sending your booking request. Please try again later.');
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = originalText;
+            }
         });
     }
 
     // Contact Form Submission
     const contactForm = document.getElementById('contactForm');
     if (contactForm) {
-        contactForm.addEventListener('submit', function(e) {
+        contactForm.addEventListener('submit', async function(e) {
             e.preventDefault();
             
             if (!validateForm(contactForm)) {
@@ -89,28 +113,31 @@ document.addEventListener('DOMContentLoaded', function() {
             submitBtn.disabled = true;
             submitBtn.textContent = 'Sending...';
 
-            // Get form data
-            const formData = {
-                from_name: document.getElementById('contactName').value,
-                from_email: document.getElementById('contactEmail').value,
-                subject: document.getElementById('contactSubject').value,
-                message: document.getElementById('contactMessage').value
-            };
+            try {
+                // Get form data
+                const formData = {
+                    from_name: document.getElementById('contactName').value,
+                    from_email: document.getElementById('contactEmail').value,
+                    subject: document.getElementById('contactSubject').value,
+                    message: document.getElementById('contactMessage').value
+                };
 
-            // Send email using EmailJS
-            emailjs.send('service_obk7vl2', 'template_plk8gwk', formData)
-                .then(function() {
-                    alert('Message sent successfully! We will get back to you soon.');
-                    contactForm.reset();
-                    submitBtn.disabled = false;
-                    submitBtn.textContent = originalText;
-                })
-                .catch(function(error) {
-                    alert('There was an error sending your message. Please try again later.');
-                    console.error('EmailJS Error:', error);
-                    submitBtn.disabled = false;
-                    submitBtn.textContent = originalText;
-                });
+                const message = await handleFormSubmission(
+                    formData,
+                    'service_obk7vl2',
+                    'template_plk8gwk',
+                    'Message sent successfully! We will get back to you soon.'
+                );
+
+                alert(message);
+                contactForm.reset();
+            } catch (error) {
+                console.error('EmailJS Error:', error);
+                alert('There was an error sending your message. Please try again later.');
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = originalText;
+            }
         });
     }
 });
@@ -133,10 +160,12 @@ function validateForm(form) {
 }
 
 // Add input validation listeners
-document.querySelectorAll('input[required], select[required], textarea[required]').forEach(input => {
-    input.addEventListener('input', function() {
-        if (this.value.trim()) {
-            this.classList.remove('is-invalid');
-        }
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('input[required], select[required], textarea[required]').forEach(input => {
+        input.addEventListener('input', function() {
+            if (this.value.trim()) {
+                this.classList.remove('is-invalid');
+            }
+        });
     });
 }); 
