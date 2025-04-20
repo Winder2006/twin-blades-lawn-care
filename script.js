@@ -1,8 +1,3 @@
-// Initialize EmailJS
-(function() {
-    emailjs.init('R7gIu7ZTs2-KpCtIe');
-})();
-
 // Wait for the DOM to be fully loaded
 document.addEventListener('DOMContentLoaded', function() {
     const calendarEl = document.getElementById('calendar');
@@ -60,20 +55,27 @@ document.addEventListener('DOMContentLoaded', function() {
                 price: document.getElementById('yardSize').options[document.getElementById('yardSize').selectedIndex].text
             };
 
-            // Send email using EmailJS
-            emailjs.send('service_obk7vl2', 'template_cownlse', formData)
-                .then(function() {
-                    alert('Booking request sent successfully! We will contact you shortly.');
-                    bookingForm.reset();
-                    submitBtn.disabled = false;
-                    submitBtn.textContent = originalText;
-                })
-                .catch(function(error) {
-                    alert('There was an error sending your booking request. Please try again later.');
-                    console.error('EmailJS Error:', error);
-                    submitBtn.disabled = false;
-                    submitBtn.textContent = originalText;
-                });
+            // Check if EmailJS is initialized
+            if (typeof emailjs !== 'undefined') {
+                // Send email using EmailJS
+                emailjs.send('service_obk7vl2', 'template_cownlse', formData)
+                    .then(function() {
+                        alert('Booking request sent successfully! We will contact you shortly.');
+                        bookingForm.reset();
+                        submitBtn.disabled = false;
+                        submitBtn.textContent = originalText;
+                    })
+                    .catch(function(error) {
+                        alert('There was an error sending your booking request. Please try again later.');
+                        console.error('EmailJS Error:', error);
+                        submitBtn.disabled = false;
+                        submitBtn.textContent = originalText;
+                    });
+            } else {
+                alert('Email service is not initialized. Please try again later.');
+                submitBtn.disabled = false;
+                submitBtn.textContent = originalText;
+            }
         });
     }
 
@@ -102,20 +104,27 @@ document.addEventListener('DOMContentLoaded', function() {
                 message: document.getElementById('contactMessage').value
             };
 
-            // Send email using EmailJS
-            emailjs.send('service_obk7vl2', 'template_plk8gwk', formData)
-                .then(function() {
-                    alert('Message sent successfully! We will get back to you soon.');
-                    contactForm.reset();
-                    submitBtn.disabled = false;
-                    submitBtn.textContent = originalText;
-                })
-                .catch(function(error) {
-                    alert('There was an error sending your message. Please try again later.');
-                    console.error('EmailJS Error:', error);
-                    submitBtn.disabled = false;
-                    submitBtn.textContent = originalText;
-                });
+            // Check if EmailJS is initialized
+            if (typeof emailjs !== 'undefined') {
+                // Send email using EmailJS
+                emailjs.send('service_obk7vl2', 'template_plk8gwk', formData)
+                    .then(function() {
+                        alert('Message sent successfully! We will get back to you soon.');
+                        contactForm.reset();
+                        submitBtn.disabled = false;
+                        submitBtn.textContent = originalText;
+                    })
+                    .catch(function(error) {
+                        alert('There was an error sending your message. Please try again later.');
+                        console.error('EmailJS Error:', error);
+                        submitBtn.disabled = false;
+                        submitBtn.textContent = originalText;
+                    });
+            } else {
+                alert('Email service is not initialized. Please try again later.');
+                submitBtn.disabled = false;
+                submitBtn.textContent = originalText;
+            }
         });
     }
 });
