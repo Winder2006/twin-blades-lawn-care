@@ -69,11 +69,6 @@ document.addEventListener('DOMContentLoaded', function() {
             throw new Error('Please wait a moment before submitting again.');
         }
 
-        // Check if EmailJS is properly initialized
-        if (!window.emailjsLoaded) {
-            throw new Error('EmailJS is not properly initialized. Please refresh the page and try again.');
-        }
-
         let retries = 0;
         while (retries <= maxRetries) {
             try {
