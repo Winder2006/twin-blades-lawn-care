@@ -109,7 +109,10 @@
     <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js"></script>
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3.11.0/dist/email.min.js"></script>
     <script>
-        emailjs.init("R7gIu7ZTs2-KpCtIe");
+        // Wait for EmailJS to load
+        window.onload = function() {
+            emailjs.init("R7gIu7ZTs2-KpCtIe");
+        }
     </script>
     <script src="script.js"></script>
 </body>

@@ -229,7 +229,7 @@ document.addEventListener('DOMContentLoaded', function() {
         return function executedFunction(...args) {
             const later = () => {
                 clearTimeout(timeout);
-                func(...args);
+                func.apply(this, args);
             };
             clearTimeout(timeout);
             timeout = setTimeout(later, wait);
@@ -238,7 +238,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     document.querySelectorAll('input[required], select[required], textarea[required]').forEach(input => {
         const debouncedValidation = debounce(function() {
-            const value = this.value.trim();
+            const value = this.value ? this.value.trim() : '';
             if (!value) {
                 this.classList.add('is-invalid');
             } else {
