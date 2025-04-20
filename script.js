@@ -1,7 +1,4 @@
-// Initialize EmailJS
-emailjs.init("YOUR_EMAILJS_USER_ID"); // Replace with your EmailJS user ID
-
-// Calendar Initialization
+// Wait for the DOM to be fully loaded
 document.addEventListener('DOMContentLoaded', function() {
     const calendarEl = document.getElementById('calendar');
     if (calendarEl) {
@@ -34,25 +31,30 @@ document.addEventListener('DOMContentLoaded', function() {
         bookingForm.addEventListener('submit', function(e) {
             e.preventDefault();
             
-            const formData = {
-                name: document.getElementById('name').value,
-                email: document.getElementById('email').value,
-                phone: document.getElementById('phone').value,
-                address: document.getElementById('address').value,
-                yardSize: document.getElementById('yardSize').value,
-                date: document.getElementById('date').value,
-                time: document.getElementById('time').value,
-                notes: document.getElementById('notes').value
-            };
+            if (!validateForm(bookingForm)) {
+                alert('Please fill in all required fields.');
+                return;
+            }
+
+            // Show loading state
+            const submitBtn = bookingForm.querySelector('button[type="submit"]');
+            const originalText = submitBtn.textContent;
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Sending...';
 
             // Send email using EmailJS
-            emailjs.send("YOUR_EMAILJS_SERVICE_ID", "YOUR_EMAILJS_TEMPLATE_ID", formData)
-                .then(function(response) {
+            emailjs.sendForm('service_obk7vl2', 'template_cownlse', bookingForm)
+                .then(function() {
                     alert('Booking request sent successfully! We will contact you shortly.');
                     bookingForm.reset();
-                }, function(error) {
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = originalText;
+                })
+                .catch(function(error) {
                     alert('There was an error sending your booking request. Please try again later.');
                     console.error('EmailJS Error:', error);
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = originalText;
                 });
         });
     }
@@ -63,21 +65,30 @@ document.addEventListener('DOMContentLoaded', function() {
         contactForm.addEventListener('submit', function(e) {
             e.preventDefault();
             
-            const formData = {
-                name: document.getElementById('contactName').value,
-                email: document.getElementById('contactEmail').value,
-                subject: document.getElementById('contactSubject').value,
-                message: document.getElementById('contactMessage').value
-            };
+            if (!validateForm(contactForm)) {
+                alert('Please fill in all required fields.');
+                return;
+            }
+
+            // Show loading state
+            const submitBtn = contactForm.querySelector('button[type="submit"]');
+            const originalText = submitBtn.textContent;
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Sending...';
 
             // Send email using EmailJS
-            emailjs.send("YOUR_EMAILJS_SERVICE_ID", "YOUR_EMAILJS_TEMPLATE_ID", formData)
-                .then(function(response) {
+            emailjs.sendForm('service_obk7vl2', 'template_plk8gwk', contactForm)
+                .then(function() {
                     alert('Message sent successfully! We will get back to you soon.');
                     contactForm.reset();
-                }, function(error) {
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = originalText;
+                })
+                .catch(function(error) {
                     alert('There was an error sending your message. Please try again later.');
                     console.error('EmailJS Error:', error);
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = originalText;
                 });
         });
     }
