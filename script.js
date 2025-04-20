@@ -70,7 +70,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
         // Check if EmailJS is properly initialized
-        if (typeof emailjs === 'undefined') {
+        if (!window.emailjsLoaded) {
             throw new Error('EmailJS is not properly initialized. Please refresh the page and try again.');
         }
 
@@ -223,39 +223,23 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // Add input validation listeners with debouncing
-    const debounce = (func, wait) => {
-        let timeout;
-        return function executedFunction(event) {
-            const element = event.target;
-            const later = () => {
-                clearTimeout(timeout);
-                func(element);
-            };
-            clearTimeout(timeout);
-            timeout = setTimeout(later, wait);
-        };
-    };
-
+    // Add simple validation listeners
     document.querySelectorAll('input[required], select[required], textarea[required]').forEach(input => {
-        const debouncedValidation = debounce(function(element) {
-            const value = element.value ? element.value.trim() : '';
-            if (!value) {
-                element.classList.add('is-invalid');
-            } else {
-                element.classList.remove('is-invalid');
-                
-                // Validate email and phone fields
-                if (element.type === 'email' && !isValidEmail(value)) {
-                    element.classList.add('is-invalid');
-                } else if (element.type === 'tel' && !isValidPhone(value)) {
-                    element.classList.add('is-invalid');
-                }
+        input.addEventListener('input', () => {
+            const value = input.value ? input.value.trim() : '';
+            if (value) {
+                input.classList.remove('is-invalid');
+                input.removeAttribute('title');
             }
-        }, 300);
-
-        input.addEventListener('input', debouncedValidation);
-        input.addEventListener('blur', debouncedValidation);
+        });
+        
+        input.addEventListener('blur', () => {
+            const value = input.value ? input.value.trim() : '';
+            if (!value) {
+                input.classList.add('is-invalid');
+                input.setAttribute('title', 'This field is required');
+            }
+        });
     });
 });
 
@@ -265,7 +249,7 @@ function validateForm(form) {
     let isValid = true;
 
     inputs.forEach(input => {
-        const value = input.value.trim();
+        const value = input.value ? input.value.trim() : '';
         if (!value) {
             isValid = false;
             input.classList.add('is-invalid');
