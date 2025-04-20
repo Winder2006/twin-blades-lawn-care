@@ -42,8 +42,21 @@ document.addEventListener('DOMContentLoaded', function() {
             submitBtn.disabled = true;
             submitBtn.textContent = 'Sending...';
 
+            // Get form data
+            const formData = {
+                from_name: document.getElementById('name').value,
+                from_email: document.getElementById('email').value,
+                phone: document.getElementById('phone').value,
+                address: document.getElementById('address').value,
+                yard_size: document.getElementById('yardSize').value,
+                service_date: document.getElementById('date').value,
+                service_time: document.getElementById('time').value,
+                notes: document.getElementById('notes').value,
+                price: document.getElementById('yardSize').options[document.getElementById('yardSize').selectedIndex].text
+            };
+
             // Send email using EmailJS
-            emailjs.sendForm('service_obk7vl2', 'template_cownlse', bookingForm)
+            emailjs.send('service_obk7vl2', 'template_cownlse', formData)
                 .then(function() {
                     alert('Booking request sent successfully! We will contact you shortly.');
                     bookingForm.reset();
@@ -76,8 +89,16 @@ document.addEventListener('DOMContentLoaded', function() {
             submitBtn.disabled = true;
             submitBtn.textContent = 'Sending...';
 
+            // Get form data
+            const formData = {
+                from_name: document.getElementById('contactName').value,
+                from_email: document.getElementById('contactEmail').value,
+                subject: document.getElementById('contactSubject').value,
+                message: document.getElementById('contactMessage').value
+            };
+
             // Send email using EmailJS
-            emailjs.sendForm('service_obk7vl2', 'template_plk8gwk', contactForm)
+            emailjs.send('service_obk7vl2', 'template_plk8gwk', formData)
                 .then(function() {
                     alert('Message sent successfully! We will get back to you soon.');
                     contactForm.reset();
