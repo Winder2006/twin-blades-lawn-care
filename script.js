@@ -1,3 +1,8 @@
+// Initialize EmailJS
+(function() {
+    emailjs.init('R7gIu7ZTs2-KpCtIe');
+})();
+
 // Wait for the DOM to be fully loaded
 document.addEventListener('DOMContentLoaded', function() {
     const calendarEl = document.getElementById('calendar');
