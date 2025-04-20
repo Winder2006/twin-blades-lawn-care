@@ -226,10 +226,11 @@ document.addEventListener('DOMContentLoaded', function() {
     // Add input validation listeners with debouncing
     const debounce = (func, wait) => {
         let timeout;
-        return function executedFunction(...args) {
+        return function executedFunction(event) {
+            const element = event.target;
             const later = () => {
                 clearTimeout(timeout);
-                func.apply(this, args);
+                func(element);
             };
             clearTimeout(timeout);
             timeout = setTimeout(later, wait);
@@ -237,18 +238,18 @@ document.addEventListener('DOMContentLoaded', function() {
     };
 
     document.querySelectorAll('input[required], select[required], textarea[required]').forEach(input => {
-        const debouncedValidation = debounce(function() {
-            const value = this.value ? this.value.trim() : '';
+        const debouncedValidation = debounce(function(element) {
+            const value = element.value ? element.value.trim() : '';
             if (!value) {
-                this.classList.add('is-invalid');
+                element.classList.add('is-invalid');
             } else {
-                this.classList.remove('is-invalid');
+                element.classList.remove('is-invalid');
                 
                 // Validate email and phone fields
-                if (this.type === 'email' && !isValidEmail(value)) {
-                    this.classList.add('is-invalid');
-                } else if (this.type === 'tel' && !isValidPhone(value)) {
-                    this.classList.add('is-invalid');
+                if (element.type === 'email' && !isValidEmail(value)) {
+                    element.classList.add('is-invalid');
+                } else if (element.type === 'tel' && !isValidPhone(value)) {
+                    element.classList.add('is-invalid');
                 }
             }
         }, 300);
